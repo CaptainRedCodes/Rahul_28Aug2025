@@ -1,0 +1,64 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+*.pyo
+*.pyd
+
+# --- Virtualenv ---
+venv/
+.env/
+.venv/
+env/
+ENV/
+pip-wheel-metadata/
+*.whl
+
+# --- IDE / Editor ---
+.vscode/
+.idea/
+*.swp
+*.swo
+*.bak
+
+# --- OS ---
+.DS_Store
+Thumbs.db
+
+# --- FastAPI / Uvicorn logs ---
+*.log
+
+# --- Alembic ---
+alembic/__pycache__/
+alembic/*.pyc
+alembic/*.pyo
+alembic/*.pyd
+alembic/__pycache__/
+alembic/versions/__pycache__/
+alembic/versions/*.pyc
+
+# --- Environment variables / secrets ---
+.env
+.env.*
+!.env.example  # keep a template for others
+
+# --- Postgres dumps ---
+*.sql
+*.dump
+*.backup
+
+# --- pytest / coverage ---
+.coverage
+htmlcov/
+.cache/
+.pytest_cache/
+
+data/*
+
+reports/*
+data
