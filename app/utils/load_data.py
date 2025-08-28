@@ -66,7 +66,6 @@ def load_menu_hours(db: Session, csv_path="data/menu_hours.csv"):
             logging.warning("menu_hours.csv is empty")
             return
 
-        # Ensure column names are consistent
         df = df.rename(columns={
             "dayOfWeek": "day_of_week",
             "start_time_local": "start_time_local",
@@ -77,11 +76,9 @@ def load_menu_hours(db: Session, csv_path="data/menu_hours.csv"):
         df["start_time_local"] = df["start_time_local"].apply(str_to_time)
         df["end_time_local"] = df["end_time_local"].apply(str_to_time)
 
-        # Step 1: get all valid store_ids from timezone
         valid_store_ids = {str(row[0]) for row in db.query(TimeZone.store_id).all()}
         incoming_store_ids = set(df["store_id"].astype(str).unique())
 
-        # Step 2: find missing store_ids and insert with default timezone
         missing_store_ids = incoming_store_ids - valid_store_ids
         if missing_store_ids:
             logging.info(f"Adding {len(missing_store_ids)} missing stores with default timezone America/Chicago")
@@ -92,7 +89,6 @@ def load_menu_hours(db: Session, csv_path="data/menu_hours.csv"):
             db.commit()
             valid_store_ids.update(missing_store_ids)
 
-        # Step 3: keep only valid stores
         df = df[df["store_id"].isin(valid_store_ids)]
 
         if df.empty:
@@ -127,7 +123,7 @@ def load_store_status(db: Session):
     """Load store status data from CSV file in chunks"""
     chunk_size = 20000
     total = 0
-    max_records = 10000
+    #max_records = 2000000
 
     try:
         valid_store_ids = {str(row[0]) for row in db.query(TimeZone.store_id).all()}
@@ -137,23 +133,20 @@ def load_store_status(db: Session):
             return
 
         for chunk in pd.read_csv("data/store_status.csv", chunksize=chunk_size):
-            if total >= max_records:   # stop if already reached limit
-                break
-            # dropping rows with missing required fields
-            chunk = chunk.dropna(subset=["store_id", "status", "timestamp_utc"])
-            
-            # converting store_id to string for consistent comparison
-            chunk["store_id"] = chunk["store_id"].astype(str)
+            # if total >= max_records:   # uncomment if max_record is required
+            #     break
 
-            # only valid store_ids
+
+            chunk = chunk.dropna(subset=["store_id", "status", "timestamp_utc"])
+            chunk["store_id"] = chunk["store_id"].astype(str)
             chunk = chunk[chunk["store_id"].isin(valid_store_ids)]
 
             if chunk.empty:
                 continue
 
-            rows_left = max_records - total
-            if len(chunk) > rows_left:
-                chunk = chunk.iloc[:rows_left]
+            # rows_left = max_records - total
+            # if len(chunk) > rows_left:
+            #     chunk = chunk.iloc[:rows_left]  #uncomment if max_record is required
 
             records = [
                 {

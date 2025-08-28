@@ -16,16 +16,13 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = FastAPI(title="Store Monitoring", version="2.4.2")
+
+
 @app.post("/trigger_report")
-async def trigger_report(
-    background_tasks: BackgroundTasks,
-    session: Session = Depends(get_session)
-) -> Dict[str, str]:
+async def trigger_report(background_tasks: BackgroundTasks,session: Session = Depends(get_session)) -> Dict[str, str]:
     """
     Trigger report generation.
 
-    Returns:
-        Dictionary with report_id for polling
     """
     try:
         new_report = Report(status=ReportStatus.RUNNING)
@@ -55,16 +52,9 @@ async def trigger_report(
 
 
 @app.get("/get_report/{report_id}")
-async def get_report(report_id: UUID, session: Session = Depends(get_session)
-) -> ReportResultResponse:
+async def get_report(report_id: UUID, session: Session = Depends(get_session)) -> ReportResultResponse:
     """
     Get report status and data.
-    
-    Args:
-        report_id: Report identifier from trigger_report
-        
-    Returns:
-        ReportResponse with status and optional CSV data
     """
     try:
         job = get_report_job(session, report_id)
@@ -111,8 +101,10 @@ async def get_report(report_id: UUID, session: Session = Depends(get_session)
         logger.error(f"Error getting report {report_id}: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
     
+
 @app.get("/download_report/{report_id}")
 async def download_report(report_id: UUID, session: Session = Depends(get_session)):
+    """ Download the report in .csv file"""
     job = get_report_job(session, report_id)
 
     if not job or job.status != ReportStatus.COMPLETE:
@@ -135,7 +127,9 @@ def get_db():
     finally:
         db.close()
 
+
 @app.post("/upload-data/")
 def upload_data(db: Session = Depends(get_db)):
+    """ Automatic upload of data of 3 files: menu_hours.csv,store_status.csv,timezones.csv"""
     load_csv(db)
     return {"status": "success"}
