@@ -71,7 +71,7 @@ alembic upgrade head
 uvicorn app.main:app --reload
 ```
 
-The API will be available at `http://127.0.0.1:8000/`
+The API will be available at `http://127.0.0.1:8000/docs/`
 
 ## API Documentation
 
@@ -180,12 +180,12 @@ store-monitoring/
 ```
 ## Ideas of Improving the project
 
-1.Caching frequently accesed report
-2.Generating reports based on only required restaurants
-3.Using ETL pipelines for data ingestion and validation
-4.Make better data ingestion for Bulk operation
-5.Use ASynchronous methods for report generation
-6.Making sure of not overloading API requests by adding some rate limiting mechanism
+1. Caching frequently accesed report
+2. Generating reports based on only required restaurants
+3. Using ETL pipelines for data ingestion and validation
+4. Make better data ingestion for Bulk operation
+5. Use ASynchronous methods for report generation
+6. Making sure of not overloading API requests by adding some rate limiting mechanism
 
 ## Contributing
 
