@@ -66,7 +66,7 @@ def _stream_status_logs(session: Session, batch_size: int = BATCH_SIZE) -> Gener
                     .all())
             
             if not batch:
-                logger.info(f"Completed processing {total_processed} log records")
+                logger.info(f"Completed processing {total_processed} log records, Please wait for some time to processes your report to csv file")
                 break
                 
             total_processed += len(batch)
@@ -411,7 +411,6 @@ def generate_full_report(report_id: UUID) -> None:
         csv_content = generate_report_csv(results)
         report_file_path = REPORT_STORAGE_PATH / f"{report_id}.csv"
         
-        logging.info("Write your report please wait....")
         with open(report_file_path, 'w', newline='', encoding='utf-8') as f:
             f.write(csv_content)
 
